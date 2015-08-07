@@ -93,6 +93,6 @@ OR
     }
 ```
 
-03. Binding ListView control ItemsSource property to Incremental property.
+03.Binding ListView control ItemsSource property to Incremental property.
 
 Now the data bound to ListView are paged on ListView scrolling event.
