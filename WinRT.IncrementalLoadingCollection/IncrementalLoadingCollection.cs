@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 
@@ -25,7 +26,7 @@ namespace WinRT.IncrementalLoadingCollection
         ///<para>int: Page size (Number of items per page).</para>
         ///<para>Returns: IEnumerable&lt;T&gtl (Current page items).</para>
         /// </summary>        
-        private readonly Func<int, int, IEnumerable<T>> itemsLoader;
+        private readonly Func<int, int, Task<IEnumerable<T>>> itemsLoader;
 
         /// <summary>
         /// Determines current page index.
@@ -61,7 +62,7 @@ namespace WinRT.IncrementalLoadingCollection
         /// <param name="pageSize">
         /// int: Sets page size (Number of items per page).
         /// </param>
-        public IncrementalLoadingCollection(Func<int, int, IEnumerable<T>> itemsLoader, int pageSize)
+        public IncrementalLoadingCollection(Func<int, int, Task<IEnumerable<T>>> itemsLoader, int pageSize)
             : base()
         {
             this.HasMoreItems = true;
@@ -84,7 +85,7 @@ namespace WinRT.IncrementalLoadingCollection
         /// <param name="pageSize">
         /// int: Sets page size (Number of items per page).
         /// </param>
-        public IncrementalLoadingCollection(IEnumerable<T> collection, Func<int, int, IEnumerable<T>> itemsLoader, int pageSize)
+        public IncrementalLoadingCollection(IEnumerable<T> collection, Func<int, int, Task<IEnumerable<T>>> itemsLoader, int pageSize)
             : base(collection)
         {
             this.HasMoreItems = true;
@@ -103,9 +104,9 @@ namespace WinRT.IncrementalLoadingCollection
 
             try
             {
-                var items = itemsLoader(currentPage++, pageSize);
                 return System.Threading.Tasks.Task.Run<LoadMoreItemsResult>(async () =>
                 {
+                    var items = await itemsLoader(currentPage, pageSize);
                     if (items.Count() == 0)
                     {
                         HasMoreItems = false;
@@ -121,7 +122,7 @@ namespace WinRT.IncrementalLoadingCollection
                                     this.Add(item);
                                 }
                             });
-                        return new LoadMoreItemsResult() { Count = count = ((uint)Items.Count - 1) };
+                        return new LoadMoreItemsResult() { Count = count + ((uint)Items.Count - 1) };
                     }
                 }).AsAsyncOperation<LoadMoreItemsResult>();
             }
