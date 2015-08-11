@@ -24,7 +24,7 @@ namespace WinRT.IncrementalLoadingCollection
         /// <para>Parameters:</para>
         /// <para>int: Page number.</para>
         ///<para>int: Page size (Number of items per page).</para>
-        ///<para>Returns: IEnumerable&lt;T&gtl (Current page items).</para>
+        ///<para>Returns: Task&lt;IEnumerable&lt;T&gt;&gt; (Current page items).</para>
         /// </summary>        
         private readonly Func<int, int, Task<IEnumerable<T>>> itemsLoader;
 
@@ -57,7 +57,7 @@ namespace WinRT.IncrementalLoadingCollection
         /// <para>int: Page number.</para>
         ///<para>int: Page size (Number of items per page).</para>
         ///<para>Returns:</para>
-        ///<para>IEnumerable&lt;T&gt; (Current page items).</para>
+        ///<para>Task&lt;IEnumerable&lt;T&gt;&gt; (Current page items).</para>
         /// </param>
         /// <param name="pageSize">
         /// int: Sets page size (Number of items per page).
@@ -80,7 +80,7 @@ namespace WinRT.IncrementalLoadingCollection
         /// <para>int: Page number.</para>
         ///<para>int: Page size (Number of items per page).</para>
         ///<para>Returns:</para>
-        ///<para>IEnumerable&lt;T&gt; (Current page items).</para>
+        ///<para>Task&lt;IEnumerable&lt;T&gt;&gt; (Current page items).</para>
         /// </param>
         /// <param name="pageSize">
         /// int: Sets page size (Number of items per page).
