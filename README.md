@@ -96,7 +96,7 @@ OR
 
         public Class() 
         {
-            Incremental = new WinRT.Collections.IncrementalLoadingCollection<int>(
+            IncrementalLoadingSource = new WinRT.Collections.IncrementalLoadingCollection<int>(
                 async (currentPage, pageSize) =>
                 {
                     return Source.Skip(currentPage * pageSize).Take(pageSize);
@@ -114,7 +114,7 @@ To supress the warning and run the method asynchronously (which is better for UI
 
         public Class() 
         {
-            Incremental = new WinRT.Collections.IncrementalLoadingCollection<int>(
+            IncrementalLoadingSource = new WinRT.Collections.IncrementalLoadingCollection<int>(
                 async (currentPage, pageSize) =>
                 {
                     return await System.Threading.Tasks.Task.Run<IEnumerable<int>>(() =>
@@ -129,7 +129,7 @@ To supress the warning and run the method asynchronously (which is better for UI
 03.Binding ListView control ItemsSource property to Incremental.PagedItems property Like That (After setting the DataContext).
 
 ```XAML
-<ListView ItemsSource="{Binding Incremental.PagedItems}"/>
+<ListView ItemsSource="{Binding IncrementalLoadingSource.PagedItems}"/>
 ```
 
 Now the data bound to ListView are paged on ListView scrolling event.
