@@ -52,7 +52,7 @@ namespace WinRT.Collections
         /// <summary>
         /// XAML-Bindable property Gets the items of the WinRT.Collections.IncrementalLoadingCollection&lt;T&gt;.
         /// </summary>
-        public IncrementalLoadingCollection<T> PagedItems { get { return this; } private set { } }
+        public IncrementalLoadingCollection<T> PagedItems { get { return this; } }
 
         /// <summary>
         /// Initializes a new instance of WinRT.Collections.IncrementalLoadingCollection&lt;T&gt; that is empty and with initial capacity.
