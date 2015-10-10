@@ -18,7 +18,7 @@ namespace WinRT.Collections
     /// <para>IsLoading property: exposes the state of ItemsLoader delegate if it is loading or not (created to be bound to ProgressBar or ProgressRing if needed).</para>
     /// </summary>
     /// <typeparam name="T">The type of elements in the WinRT.Collections.IncrementalLoadingCollection&lt;T&gt;.</typeparam>
-    public class IncrementalLoadingCollection<T> : ObservableCollection<T>, ISupportIncrementalLoading
+    public class IncrementalLoadingCollection<T> : ObservableCollection<T>, ISupportIncrementalLoading, INotifyPropertyChanged
     {
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace WinRT.Collections
         /// <summary>
         /// XAML-Bindable property exposes loading state.
         /// </summary>
-        public bool IsLoading { get { return isLoading; } private set { isLoading = value; OnPropertyChanged(new PropertyChangedEventArgs("Loading")); } }
+        public bool IsLoading { get { return isLoading; } private set { isLoading = value; OnPropertyChanged(new PropertyChangedEventArgs("IsLoading")); } }
         /// <summary>
         /// Determines if the IncrementalLoadingCollection&lt;T&gt; has more items.
         /// </summary>
