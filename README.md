@@ -48,27 +48,39 @@ On scrolling, another page (5 numbers) will be fetched and then the ListView wil
 
 This behavior can be done by attaching an IncrementalLoadingCollection to the Source collection using the coming steps.
 
-01.I need to declar a method that returns the items of a certain page, this is a standard that I alway use for that using Linq:
+01.I need to declare a method that returns the items of a certain page, this is a standard that I alway use for that using Linq:
 
 ```C#
-    public class Class
-        private IEnumerable<int> GetPageItems(int currentPage, int pageSize)
-        {
-            return Source.Skip(currentPage * pageSize).Take(pageSize);
-        }
+    private async System.Threading.Tasks.Task<IEnumerable<int>> GetPageItems(int currentPage, int pageSize)
+    {
+        return Source.Skip(currentPage * pageSize).Take(pageSize);
     }
 ```
+
+To supress the warning and run the method asynchronously (which is better for UI responsivness), you can wrap your code inside a Task block, it will look lik that:
+
+```C#
+    private async System.Threading.Tasks.Task<IEnumerable<int>> GetPageItems(int currentPage, int pageSize)
+    {
+        return await System.Threading.Tasks.Task.Run<IEnumerable<int>>(() =>
+            {
+                return Source.Skip(currentPage * pageSize).Take(pageSize);
+            });
+    }
+```
+
+*Note: inside GetPageItems methods you can call any awaitable taks (httpclient requests, openning files, connecting to database, etc..).
 
 02.Declare IncrementalLoadingCollection and initialize it with GetPageItems method and 5 which is the page size (Number of items per page):
 
 ```C#
     public class Class
     {
-        public IncrementalLoadingCollection<int> IncrementalLoadingSource { get; set; }
+        public WinRT.Collections.IncrementalLoadingCollection<int> IncrementalLoadingSource { get; set; }
 
         public Class() 
         {
-            IncrementalLoadingSource = new IncrementalLoadingCollection<int>(GetPageItems, 5);
+            IncrementalLoadingSource = new WinRT.Collections.IncrementalLoadingCollection<int>(GetPageItems, 5);
         }
     }
 ```
@@ -80,12 +92,12 @@ OR
 ```C#
     public class Class
     {
-        public IncrementalLoadingCollection<int> IncrementalLoadingSource { get; set; }
+        public WinRT.Collections.IncrementalLoadingCollection<int> IncrementalLoadingSource { get; set; }
 
         public Class() 
         {
-            IncrementalLoadingSource = new IncrementalLoadingCollection<int>(
-                (currentPage, pageSize) =>
+            IncrementalLoadingSource = new WinRT.Collections.IncrementalLoadingCollection<int>(
+                async (currentPage, pageSize) =>
                 {
                     return Source.Skip(currentPage * pageSize).Take(pageSize);
                 }, 5);
@@ -93,6 +105,31 @@ OR
     }
 ```
 
-03.Binding ListView control ItemsSource property to Incremental property.
+To supress the warning and run the method asynchronously (which is better for UI responsivness), you can wrap your code inside a Task block, it will look lik that:
+
+```C#
+    public class Class
+    {
+        public WinRT.Collections.IncrementalLoadingCollection<int> IncrementalLoadingSource { get; set; }
+
+        public Class() 
+        {
+            IncrementalLoadingSource = new WinRT.Collections.IncrementalLoadingCollection<int>(
+                async (currentPage, pageSize) =>
+                {
+                    return await System.Threading.Tasks.Task.Run<IEnumerable<int>>(() =>
+                    {
+                        return Source.Skip(currentPage * pageSize).Take(pageSize);
+                    });
+                }, 5);
+        }
+    }
+```
+
+03.Binding ListView control ItemsSource property to Incremental.PagedItems property Like That (After setting the DataContext).
+
+```XAML
+<ListView ItemsSource="{Binding IncrementalLoadingSource.PagedItems}"/>
+```
 
 Now the data bound to ListView are paged on ListView scrolling event.
